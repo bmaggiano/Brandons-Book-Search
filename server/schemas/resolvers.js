@@ -30,17 +30,18 @@ const resolvers = {
             return { token, user };
         },
         addUser: async ( parent, args) => {
-            const user = await User.create(args)
+            const user = await User.create({ username, email, password })
             const token = signToken(user)
             return { token, user };
         },
         saveBook: async ( parent, args, context) => {
             if (context.user) {
-                return User.findOneAndUpdate(
+                const updatedUser = await User.findOneAndUpdate(
                     { _id: context.user._id},
                     { $addToSet: { savedBooks: args }},
                     { new: true, runValidators: true },
                 )
+                return updatedUser
             }
             throw new AuthenticationError('You need to be logged in to save a book')
         },
