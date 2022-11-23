@@ -3,13 +3,12 @@ import { Jumbotron, Container, CardColumns, Card, Button } from 'react-bootstrap
 
 import { useQuery, useMutation } from '@apollo/client'
 import { REMOVE_BOOK } from '../utils/mutations';
-import { GET_ME } from '../utils/queries'
+import { QUERY_ME } from '../utils/queries'
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 
 const SavedBooks = () => {
-  // const [userData, setUserData] = useState({});
-  const { loading, data } = useQuery(GET_ME)
+  const { loading, data } = useQuery(QUERY_ME)
   const [removeBook, {error}] = useMutation(REMOVE_BOOK)
   const userData = data?.me || {}
 
@@ -28,8 +27,6 @@ const SavedBooks = () => {
         throw new Error('something went wrong!');
       }
 
-      const updatedUser = await response.json();
-      setUserData(updatedUser);
       // upon success, remove book's id from localStorage
       removeBookId(bookId);
     } catch (err) {
@@ -38,7 +35,7 @@ const SavedBooks = () => {
   };
 
   // if data isn't here yet, say so
-  if (!userDataLength) {
+  if (loading) {
     return <h2>LOADING...</h2>;
   }
 
